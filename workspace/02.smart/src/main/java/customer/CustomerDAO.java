@@ -30,7 +30,7 @@ public class CustomerDAO implements CustomerService{
 	@Override
 	public List<CustomerVO> customer_list() {
 		
-		return null;
+		return sql.selectList("customer.list");
 	}
 
 	@Override

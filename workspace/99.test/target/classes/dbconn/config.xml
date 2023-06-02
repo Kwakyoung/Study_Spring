@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="dbcp" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@192.168.0.10:1521:xe"/>
+		<property name="username" value="hanul"/>
+		<property name="password" value="0000"/>
+	</bean>
+	
+	<bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dbcp"/> <!-- 주소값을 담아야하기때문에 래퍼런스로 참조하기위에 위에꺼에 id를 주어줌 -->
+		<property name="mapperLocations" value="classpath:sqlmap/*.xml"/> <!-- mapper파일을 찾아가기위해 지정 -->
+	</bean>
+	
+	<bean class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="factory" />
+   <!-- <constructor-arg index="0" ref="factory" />  이렇게도 표현은 가능! --> 
+	</bean>
+	
+	
+</beans>
