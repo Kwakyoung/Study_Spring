@@ -3,8 +3,47 @@
 
 <mapper namespace="customer">
 	
+	
+	
+	
+	
+
+<!-- 고객정보 삭제 -->
+<delete id="delete">
+	delete from customer
+	where id = #{id}
+</delete>
+
+
+
+<!-- 고객정보 변경저장 -->
+<update id="update">
+	update customer 
+	set name = #{name}, gender = #{gender}, email = #{email}, phone = #{phone}
+	where id = #{id}
+</update>
+
+
+<!-- 선택한 고객 정보 조회 -->	
+<select id="info" resultType="customer.CustomerVO">
+	select * from customer where id = #{id}
+</select>	
+
+	
+<!-- 신규 고객 정보 저장 -->	
+<insert id="insert">
+	insert into customer (name,gender,email,phone)
+	values( #{name}, #{gender}, #{email}, #{phone} )
+</insert>
+	
+	
+	
 <!-- 고객목록조회 -->
 <select id="list" resultType="customer.CustomerVO">
-	select * from customer order by name
+	select * from customer 
+	<if test ="name != null">
+	where name LIKE '%' || #{name} || '%'
+	</if>
+	order by name
 </select>
 </mapper>

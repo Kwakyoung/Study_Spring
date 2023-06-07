@@ -13,7 +13,7 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	@Override
 	public void customer_insert(CustomerVO vo) {
-		
+		dao.customer_insert(vo);
 
 	}
 
@@ -24,20 +24,25 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerVO customer_info(int id) {
-		
-		return null;
+		return dao.customer_info(id);
 	}
 
 	@Override
 	public void customer_update(CustomerVO vo) {
-		
+		dao.customer_update(vo);
 
 	}
 
 	@Override
 	public void customer_delete(int id) {
-		
+		dao.customer_delete(id);
 
+	}
+
+	@Override
+	public List<CustomerVO> customer_list(String name) {
+		
+		return dao.customer_list(name);
 	}
 
 }

@@ -32,6 +32,14 @@ table.tb-row tr{
 	height : 60px
 }
 
+table.tb-list td, table.tb-list tr {
+	text-align: center;
+}
+
+a.text-link:hover {
+	color : #0d6efd; 
+	text-decoration : underline;
+	}
 
 
 
