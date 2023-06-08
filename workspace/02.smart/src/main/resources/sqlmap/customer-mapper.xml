@@ -25,7 +25,7 @@
 
 
 <!-- 선택한 고객 정보 조회 -->	
-<select id="info" resultType="customer.CustomerVO">
+<select id="info" resultType="smart.customer.CustomerVO">
 	select * from customer where id = #{id}
 </select>	
 
@@ -39,7 +39,7 @@
 	
 	
 <!-- 고객목록조회 -->
-<select id="list" resultType="customer.CustomerVO">
+<select id="list" resultType="smart.customer.CustomerVO">
 	select * from customer 
 	<if test ="name != null">
 	where name LIKE '%' || #{name} || '%'

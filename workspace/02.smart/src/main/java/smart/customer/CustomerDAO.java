@@ -1,17 +1,18 @@
-package customer;
+package smart.customer;
 
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 @Repository   
 public class CustomerDAO implements CustomerService{
 
-	@Autowired private SqlSession sql;
+	@Autowired @Qualifier("hanul") SqlSession sql;
 	
 	// 생성된 객체 (bean으로 등록된 객체들)의 주소를 스프링 container에 관리가 됨.
 	// IoC (Inversion of Control) 개발자가 필요할 때마다 new 라는 키워드로 객체를 생성 -> 스프링프레임웤이 객체를 생성

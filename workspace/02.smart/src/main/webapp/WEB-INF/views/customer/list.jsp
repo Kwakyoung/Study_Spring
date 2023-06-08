@@ -8,7 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h3 class="my-4">고객목록</h3>
+	<h3 class="my-4">고객 목록</h3>
 	<div class="row my-3 justify-content-between">
 		<div class="col-auto">
 		<form method="post" action="list.cu">
