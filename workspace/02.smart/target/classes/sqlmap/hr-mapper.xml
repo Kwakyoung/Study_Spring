@@ -4,17 +4,54 @@
 <mapper namespace="hr">
 	
 	
+<!-- 사원정보 변경저장 -->	
+<update id="update">
+update employees set last_name = #{last_name}, first_name = #{first_name}, email = #{email},
+		phone_number = #{phone_number}, salary = #{salary}, hire_date = #{hire_date},
+		job_id = #{job_id},
+		<if test="department_id == -1">, department_id = null</if>
+		<if test="department_id != -1">, department_id = #{department_id}</if>
+where	employee_id = #{employee_id}
+</update>
+	
+	
+<!-- 회사의 부서 목록 조회 -->	
+<select id="departmentList" resultType="smart.hr.DepartmentVO">
+select 	*
+from	departments
+order by department_name
+</select>
+
+
+<!-- 회사의 업무 목록 조회 -->
+<select id="jobList" resultType="smart.hr.JobVO">
+select	*
+from	jobs
+order by job_title
+</select>	
+	
+	
+	
+<!-- 특정 사번의 사원정보 조회 -->	
+<select id="info" resultType="smart.hr.EmployeeVO">
+select	last_name|| '' || first_name AS name, job_title, department_name, e.* 
+from	employees e inner join jobs j
+ON      e.job_id = j.job_id
+left outer join departments d 
+on      d.department_id = e.department_id
+where	employee_id = #{employee_id}
+</select>
+	
+	
 <!-- 사원이 소속된 부서목록 조회 -->	
 <select id="employeeDepartmentList" resultType="smart.hr.DepartmentVO">
 SELECT  distinct department_id, NVL(department_name, '소속없음') department_name
 FROM    employees e left outer join departments d
-USING (department_id);
+USING (department_id)
 </select>
 	
 	
-	
-	
-	
+
 	
 <!-- 전체 사원정보 조회 -->
 <select id="list" resultType="smart.hr.EmployeeVO">
@@ -24,6 +61,12 @@ USING (department_id);
 	FROM    employees e, jobs j , departments d
 	WHERE   e.job_id = j.job_id
 	AND     e.department_id = d.department_id(+)
+	<if test="department_id == 0">
+	AND 	d.department_id is null
+	</if>
+	<if test="department_id > 0">
+	AND 	e.department_id = #{department_id}
+	</if>
 	ORDER BY 1
 </select>
 	
