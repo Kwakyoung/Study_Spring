@@ -28,7 +28,7 @@
 								placeholder="비밀번호"> 
 								<label>비밀번호</label>
 						</div>
-						<button class="btn btn-primary form-control">로그인</button>
+						<button class="btn btn-primary form-control py-2">로그인</button>
 						<hr>
 						<div
 							class="d-flex align-items-center justify-content-between mt-4 mb-0">
