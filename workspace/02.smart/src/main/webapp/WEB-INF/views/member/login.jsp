@@ -10,14 +10,14 @@
 <body>
 
 
-	<div class="row justify-content-center">
+	<div class="row justify-content-center h-100 align-items-center">
 		<div class="col-md-9 col-lg-7 col-xl-5">
 			<div class="card shadow-lg border-0 rounded-lg mt-5 px-3 py-5">
 				<h3 class="text-center">
 					<a href="<c:url value='/'/>"><img src="<c:url value='/img/hanul.logo.png'/>"></a>
 				</h3>
 				<div class="card-body">
-					<form>
+					<form method="post" action="smartLogin">
 						<div class="form-floating mb-3">
 							<input class="form-control" type="text" name="userid" required
 								placeholder="아이디"> 
@@ -41,7 +41,20 @@
 			</div>
 		</div>
 	</div>
+<jsp:include page="/WEB-INF/views/include/modal_alert.jsp"/>
 
+<script>
+$(function(){
+		modalAlert( "warning", "로그인 실패", "아이디나 비밀번호가 일치하지 않습니다!");
+	if( ${not empty fail} ){ // 로그인 실패인 경우
+		new bootstrap.Modal( $('#modal-alert')).show();
+	}
+})
+
+$('#modal-alert .btn-ok').click(function(){
+	$('[name=userid]').focus();
+})
+</script>
 
 </body>
 </html>
