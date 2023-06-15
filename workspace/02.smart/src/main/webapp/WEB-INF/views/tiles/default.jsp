@@ -7,7 +7,6 @@
 	<c:when test="${category eq 'login'}"><c:set var="title" value="로그인"/></c:when>
 </c:choose>
 
-<!DOCTYPE html>
 <html>
 <head>
         <meta charset="utf-8" />

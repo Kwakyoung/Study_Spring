@@ -23,6 +23,18 @@ public class MemberController {
 	@Autowired private BCryptPasswordEncoder pwEncoder;   // 주입시 bean 필요
 	
 	
+	// 비밀번호 변경처리 요청
+	@RequestMapping("/changePassword")
+	public String change(HttpSession session) {
+		MemberVO vo = (MemberVO)session.getAttribute("loginInfo");
+		
+		if ( vo==null ) return "redirect:login";
+		else			return "member/change";
+	}
+	
+	
+	
+	
 	
 	
 	// 비밀번호 찾기처리 요청
