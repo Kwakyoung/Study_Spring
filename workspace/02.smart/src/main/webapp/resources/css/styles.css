@@ -639,6 +639,7 @@ progress {
   padding-left: calc(var(--bs-gutter-x) * 1.5);
   margin-right: auto;
   margin-left: auto;
+  flex: 1 0 auto; /* footer추가후 */
 }
 
 @media (min-width: 576px) {
@@ -5113,7 +5114,7 @@ textarea.form-control-lg {
 }
 .list-group-item-light.list-group-item-action.active {
   color: #fff;
-  background-color: var(--bs-blue); /* #636464; */
+  background-color: var(--bs-blue); /*  #636464; */
   border-color: #636464;
 }
 
@@ -10835,7 +10836,7 @@ textarea.form-control-lg {
 }
 
 #sidebar-wrapper .sidebar-heading {
-  padding: 0.615rem 1.25rem;
+  padding: 0.6125rem  1.25rem;
   font-size: 1.2rem;
 }
 
@@ -10845,6 +10846,9 @@ textarea.form-control-lg {
 
 #page-content-wrapper {
   min-width: 100vw;
+  /* footer추가후 */
+  display: flex;
+  flex-direction: column;
 }
 
 body.sb-sidenav-toggled #wrapper #sidebar-wrapper {

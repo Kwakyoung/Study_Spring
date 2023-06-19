@@ -1,7 +1,7 @@
 package smart.customer;
 
 public class CustomerVO {
-	// 클래스에 선언하는 필드명 : DB Table의 Column 명과 동일하게 선언
+	// 클래스에 선언하는 필드명 : DB Table의 Column명과 동일하게 선언
 	private int id;
 	private String name, gender, email, phone;
 	public int getId() {

@@ -7,20 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-// bean으로 생성 안해도 DAO는 우리가 만든거기때문에 @Repository로 가능
 @Repository
 public class MemberDAO implements MemberService {
-		@Qualifier("hanul") @Autowired private SqlSession sql;
-		
+	@Qualifier("hanul") @Autowired private SqlSession sql;
+	
 	@Override
 	public int member_join(MemberVO vo) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sql.insert("member.join", vo);
 	}
 
 	@Override
 	public MemberVO member_info(String userid) {
-		// TODO Auto-generated method stub
 		return sql.selectOne("member.info", userid);
 	}
 
@@ -32,8 +29,7 @@ public class MemberDAO implements MemberService {
 
 	@Override
 	public int member_update(MemberVO vo) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sql.update("member.update", vo);
 	}
 
 	@Override
@@ -44,13 +40,11 @@ public class MemberDAO implements MemberService {
 
 	@Override
 	public String member_userid_email(MemberVO vo) {
-		// TODO Auto-generated method stub
 		return sql.selectOne("member.useridEmail", vo);
 	}
 
 	@Override
 	public int member_resetPassword(MemberVO vo) {
-		// TODO Auto-generated method stub
 		return sql.update("member.resetPassword", vo);
 	}
 

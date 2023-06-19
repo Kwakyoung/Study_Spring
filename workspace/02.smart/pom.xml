@@ -15,6 +15,17 @@
 	</properties>
 	<dependencies>
 	
+		<!-- json 데이터 객체용 라이브러리 -->
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20230227</version>
+		</dependency>
+		
+	
+	
+	
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
 		<!-- 이메일 전송용 라이브러리 -->
 		<dependency>
