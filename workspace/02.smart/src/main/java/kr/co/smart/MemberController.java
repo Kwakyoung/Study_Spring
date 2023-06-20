@@ -37,9 +37,9 @@ public class MemberController {
 		//curl -v -X GET "https://kauth.kakao.com/oauth/logout?
 		//client_id=${YOUR_REST_API_KEY}
 		//&logout_redirect_uri=${YOUR_LOGOUT_REDIRECT_URI}"
-		StringBuffer url = new StringBuffer("https://kauth.kakao.com/oauth/logout?");
-		url.append("client_id=").append(KAKAO_ID);
-		url.append("logout_redirect_uri=").append(common.appURL(request));
+		StringBuffer url = new StringBuffer("https://kauth.kakao.com/oauth/logout");
+		url.append("?client_id=").append(KAKAO_ID);
+		url.append("&logout_redirect_uri=").append(common.appURL(request));
 		return "redirect:" + url.toString();
 		}else
 		return "redirect:/";
@@ -112,10 +112,15 @@ public class MemberController {
 		return "default/member/find";
 	}
 
+	
+	
+	
 	private String KAKAO_ID = "647e51c2168c2ab4a51864cccfd9f419";
 	private String NAVER_ID = "lh9LUokYYqm13FH0PWvW";
 	private String NAVER_SECRET = "gMaqQgoFKW";
 
+	
+	
 	// 카카오로그인처리 요청
 	@RequestMapping("/kakaoLogin")
 	public String kakaoLogin(HttpServletRequest request) {
@@ -131,6 +136,7 @@ public class MemberController {
 		return "redirect:" + url.toString();
 	}
 
+	
 	// 네이버로그인처리 요청
 	@RequestMapping("/naverLogin")
 	public String naverLogin(HttpSession session, HttpServletRequest request) {
@@ -194,7 +200,7 @@ public class MemberController {
 		vo.setGender(hasKey(kakao, "gender", "male").equals("male") ? "남" : "여"); // M/F --> 남/여
 		vo.setPhone(hasKey(kakao, "phone_number"));
 
-		// DB에 네이버로그인 정보 저장하기 - 존재여부를 확인하여 신규/변경 저장
+		// DB에 카카오로그인 정보 저장하기 - 존재여부를 확인하여 신규/변경 저장
 		if (service.member_info(vo.getUserid()) == null) {
 			service.member_join(vo);
 		} else {
