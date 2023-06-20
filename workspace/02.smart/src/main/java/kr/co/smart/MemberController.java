@@ -103,14 +103,26 @@ public class MemberController {
 	private String NAVER_SECRET = "gMaqQgoFKW";
 	
 	
-	// https://kauth.kakao.com/oauth/authorize?response_type=code
-	// &client_id=${REST_API_KEY}
-	// &redirect_uri=${REDIRECT_URI}
 	
-	
-	
-	
-	
+	// 카카오로그인처리 요청
+	@RequestMapping("/kakaoLogin")
+	public String kakaoLogin(HttpSession session, HttpServletRequest request) {
+		// 카카오 로그인 연동 URL 생성하기
+		// https://kauth.kakao.com/oauth/authorize?response_type=code
+		// &client_id=${REST_API_KEY}
+		// &redirect_uri=${REDIRECT_URI}
+		
+		String state = UUID.randomUUID().toString();
+		session.setAttribute("state", state);
+		
+		StringBuffer url = new StringBuffer(
+				"https://kauth.kakao.com/oauth/authorize?response_type=code");
+		url.append("&client_id=").append( KAKAO_ID );
+		url.append("&state=").append( state );
+		url.append("&redirect_uri=").append( common.appURL(request) ).append( "/member/kakaoCallback" );
+		// http://localhost:8080/smart/member/kakaoCallback
+		return "redirect:" + url.toString();
+	}
 	
 	
 	
@@ -134,20 +146,36 @@ public class MemberController {
 		return "redirect:" + url.toString();
 	}
 	
-	//네이버 콜백처리
+	
+	// 카카오 콜백처리
+	@RequestMapping("/kakaoCallback")
+	public String kakaoCallback() {
+//		curl -v -X POST "https://kauth.kakao.com/oauth/token" \
+//		 -H "Content-Type: application/x-www-form-urlencoded" \
+//		 -d "grant_type=authorization_code" \
+//		 -d "client_id=${REST_API_KEY}" \
+//		 --data-urlencode "redirect_uri=${REDIRECT_URI}" \
+//		 -d "code=${AUTHORIZE_CODE}"
+		
+		
+		return "redirect:/";
+	}
+	
+	
+	
+	
+	// 네이버 콜백처리
 	@RequestMapping("/naverCallback")
 	public String naverCallback(String code, String state, HttpSession session) {
 		String storedState = (String)session.getAttribute("state");
 		if( code==null || ! state.equals(storedState) )  return "redirect:/";
-		
 		// 접근 토큰 발급 요청 
 		// https://nid.naver.com/oauth2.0/token?grant_type=authorization_code
 		// &client_id=jyvqXeaVOVmV
 		// &client_secret=527300A0_COq1_XV33cf
 		// &code=EIc5bFrl4RibFls1
 		// &state=9kgsGTfH4j7IyAkg  
-		StringBuffer url = new StringBuffer(
-				"https://nid.naver.com/oauth2.0/token?grant_type=authorization_code");
+		StringBuffer url = new StringBuffer("https://nid.naver.com/oauth2.0/token?grant_type=authorization_code");
 		url.append("&client_id=").append(NAVER_ID);
 		url.append("&client_secret=").append(NAVER_SECRET);
 		url.append("&code=").append(code);
@@ -158,6 +186,7 @@ public class MemberController {
 		JSONObject json = new JSONObject( response );
 		String token = json.getString("access_token");
 		String type = json.getString("token_type");
+		
 		
 		// 접근 토큰을 이용하여 프로필 API 호출하기
 //		curl  -XGET "https://openapi.naver.com/v1/nid/me" 
@@ -216,6 +245,7 @@ public class MemberController {
 	private String hasKey( JSONObject json, String key, String value ) {
 		return json.has(key) ? json.getString(key) : value;
 	}
+	
 	
 	
 	
