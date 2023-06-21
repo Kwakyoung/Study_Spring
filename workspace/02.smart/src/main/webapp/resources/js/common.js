@@ -32,7 +32,69 @@ function modalAlert( type, title, message ){
 }
 
 
+// 동적으로 만들어진 요소에 대해서는 document에 이벤트를 등록해야 한다
+$(document).on('click','.date + .date-delete', function(){
+	$(this).css('display', 'none'); // 삭제버튼 안보이게 처리
+	$(this).prev('.date').val(''); // 날짜태그의 값을 초기화
+})
+
+
+// 파일이 이미지파일인지 확인
+function isImage( filename ){
+	// abc.png, abc.jpg, abc.txt, abc.hwp
+	var ext = filename.substr( filename.lastIndexOf('.')+1 ).toLowerCase();
+	var imgs = [ "png", "jpg", "bmp", "gif", "jpeg", "webp" ];
+	return imgs.indexOf( ext ) == -1 ? false : true ;
+}
+
+
+
 $(function(){
+	
+	// 프로필 이미지 선택처리
+	$('input#file-single').change(function(){
+		console.log( $(this));
+		console.log(this.files);
+		
+		var _preview = $('#file-attach .file-preview');
+		var _delete = $('#file-attach .file-delete');
+		
+		var attached = this.files[0];
+		console.log( attached )
+		if( attached ){
+			// 이미지 파일인지 확인
+			if ( isImage ( attached.name)) {
+				_delete.removeClass('d-none');  //이미지 선택시 삭제버튼 안보이게 막아둔걸 없앰
+				// 미리보기 태그가 있을때만
+				if( _preview.length > 0 ){
+					_preview.html( "<img>" );
+					
+					var reader = new FileReader();
+					reader.readAsDataURL( attached );
+					reader.onload = function(e){
+						_preview.children("img").attr("src", this.result);
+					} 
+				}
+			}else {
+				// 이전 선택했떤 이미지파일처리
+				_preview.empty();
+				$(this).val(''); // 실제 file 태그의 정보 초기화
+				_delete.addClass('d-none');
+			}
+		}
+	})
+	
+	
+	
+	
+	$('.date').change(function(){
+		$(this).next('.date-delete').css('display','inline')
+	})
+	
+	$('[name=phone]').keyup(function(){
+	toPhone( $(this) );  
+})
+	
 	var today = new Date();
 	var range = today.getFullYear()-100 + ':' + today.getFullYear();
 	$.datepicker.setDefaults({
@@ -50,3 +112,24 @@ $(function(){
 	$( ".date" ).datepicker();
 	$( ".date" ).attr('readonly', true)
 }) 
+
+
+function toPhone( tag ){
+// 02-1234-5678(10자리)   010-1234-5678(11자리)
+	var phone = tag.val().replace(/[^0-9]/g,'').replace(/[-]/g,''); // 0~9 숫자만 입력되게 처리  --> 순수 전화번호 숫자만01012345678
+					  // 0~9숫자아닌거 /g (전체를) '' 로 변환	
+	if( phone.length >1 ){  // 2자리 이상 입력하면 : 02, 062, 010
+		var start = phone.substr(0, 2) == "02" ? 2 : 3,
+			middle = start + 4; // 두번째 항목 : 1234 - 무조건 4자리
+			
+			// - 만들어서 넣기
+			if ( phone.length > middle ){
+				 phone = phone.substr(0, start) + "-" + phone.substr(start, 4) + "-" + phone.substr(middle,4);
+			}else if( phone.length > start  ){
+				 phone = phone.substr(0, start) + "-" + phone.substr(start, 4) + "-";
+			}
+	}		
+	//  substr(시작, 길이), substring(시작, 끝위치)
+	
+	tag.val( phone );
+}

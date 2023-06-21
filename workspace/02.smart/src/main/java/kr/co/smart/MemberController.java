@@ -25,6 +25,18 @@ public class MemberController {
 	@Autowired
 	private BCryptPasswordEncoder pwEncoder;
 
+	
+	// 회원가입 화면 요청
+	@RequestMapping("/join")
+	public String join(HttpSession session) {
+		session.setAttribute("category", "join");
+		return "member/join";
+	}
+	
+	
+	
+	
+	
 	// 로그아웃 처리 요청
 	@RequestMapping("/logout")
 	public String logout(HttpSession session, HttpServletRequest request) {

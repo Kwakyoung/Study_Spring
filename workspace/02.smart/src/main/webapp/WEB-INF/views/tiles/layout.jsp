@@ -23,6 +23,9 @@
 	<c:when test="${category eq 'vi'}">
 		<c:set var="title" value="시각화" />
 	</c:when>
+	<c:when test="${category eq 'join'}">
+		<c:set var="title" value="회원가입" />
+	</c:when>
 </c:choose>
 <head>
 <meta charset="utf-8" />
@@ -97,7 +100,8 @@
 							<c:if test="${empty loginInfo }">
 								<li class="nav-item"><a class="nav-link"
 									href="<c:url value='/member/login'/>">로그인</a></li>
-								<li class="nav-item"><a class="nav-link" href="">회원가입</a></li>
+								<li class="nav-item"><a class="nav-link" 
+									href="<c:url value='/member/join'/>">회원가입</a></li>
 							</c:if>
 
 							<!-- 로그인된 경우 -->
