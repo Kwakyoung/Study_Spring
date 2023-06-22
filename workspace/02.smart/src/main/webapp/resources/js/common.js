@@ -32,11 +32,6 @@ function modalAlert( type, title, message ){
 }
 
 
-// 동적으로 만들어진 요소에 대해서는 document에 이벤트를 등록해야 한다
-$(document).on('click','.date + .date-delete', function(){
-	$(this).css('display', 'none'); // 삭제버튼 안보이게 처리
-	$(this).prev('.date').val(''); // 날짜태그의 값을 초기화
-})
 
 
 // 파일이 이미지파일인지 확인
@@ -50,7 +45,6 @@ function isImage( filename ){
 
 
 $(function(){
-	
 	// 프로필 이미지 선택처리
 	$('input#file-single').change(function(){
 		console.log( $(this));
@@ -64,6 +58,7 @@ $(function(){
 		if( attached ){
 			// 이미지 파일인지 확인
 			if ( isImage ( attached.name)) {
+				singleFile = attached;  // 선택한 파일정보를 관리
 				_delete.removeClass('d-none');  //이미지 선택시 삭제버튼 안보이게 막아둔걸 없앰
 				// 미리보기 태그가 있을때만
 				if( _preview.length > 0 ){
@@ -76,14 +71,35 @@ $(function(){
 					} 
 				}
 			}else {
+				singleFile = '';  // 이미지가 아닌 파일인 경우는 관리정보를 초기화
 				// 이전 선택했떤 이미지파일처리
 				_preview.empty();
 				$(this).val(''); // 실제 file 태그의 정보 초기화
 				_delete.addClass('d-none');
 			}
+		}else {
+			// 파일선택 창에서 취소를 클릭한 경우 : 어떠한 처리도 하지않는다
+			// 파일정보는 관리된 singleFile 변수에 있다
+			
 		}
 	})
 	
+	
+// 동적으로 만들어진 요소에 대해서는 document에 이벤트를 등록해야 한다
+$(document).on('click','.date + .date-delete', function(){
+	$(this).css('display', 'none'); // 삭제버튼 안보이게 처리
+	$(this).prev('.date').val(''); // 날짜태그의 값을 초기화
+})
+.on('click', '#file-attach .file-delete',function(){  // 첨부파일 삭제 버튼 클릭
+	$(this).addClass('d-none');   // 삭제버튼 안보이게
+		// 첨부되어 있던 이미지파일 없애기
+		
+		console.log('1>', $('#file-single').val() )
+		$('input[type=file]').val('');  // 첨부되어 있던 이미지파일정보 없애기
+		var _preview = $('#file-attach .file-preview');
+		if( _preview.length > 0 ) _preview.empty(); // 미리보기한 이미지 태그 없애기
+		console.log('2>', $('#file-single').val() )
+})
 	
 	
 	
@@ -94,6 +110,7 @@ $(function(){
 	$('[name=phone]').keyup(function(){
 	toPhone( $(this) );  
 })
+
 	
 	var today = new Date();
 	var range = today.getFullYear()-100 + ':' + today.getFullYear();

@@ -65,9 +65,7 @@ a.text-link:hover {
 input[type=file] {
 	display: none; /* 기본파일태그는 안보이게 */
 }
-.file {
-	max-height: 50px;
-}
+.file-preview img { max-height: 38px; }
 
 .w-px100 {width : 100px}
 .w-px90 {width : 90px}

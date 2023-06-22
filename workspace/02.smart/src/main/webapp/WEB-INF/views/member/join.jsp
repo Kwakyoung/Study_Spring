@@ -17,7 +17,13 @@ table th span {
 	<h3 class="my-4">회원가입</h3>
 	<div class="text-danger mb-2">* 는 필수입력항목입니다</div>
 	
-	<form>
+	<form method="post" action="register" enctype="multipart/form-data">
+	
+	<!-- 파일전송시 규칙 
+	1. method는 반드시 post이어야 한다
+	2. enctype="multipart/form-data"   form태그를 전송하는 형태 를 enctype 이라고 하심..
+	-->
+	
 	<table class="tb-row">
 	
 	<colgroup>
@@ -29,7 +35,7 @@ table th span {
 	 	<td>
 	 		<div class="row">
 	 			<div class="col-auto">
-	 				<input type="text" name="name" class="form-control">
+	 				<input type="text" autofocus name="name" class="form-control">
 	 			</div>
 	 		</div>
 	 	</td>
@@ -37,40 +43,51 @@ table th span {
 	 <tr>
 	 	<th><span>*</span>아이디</th>
 	 	<td>
-	 		<div class="row">
+	 		<div class="row input-check align-items-center">
 	 			<div class="col-auto">
-	 				<input type="text" name="userid" class="form-control">
+	 				<input type="text" name="userid" class="check-item form-control">
 	 			</div>
+	 			<div class="col-auto">
+	 				<a class="btn btn-secondary btn-sm" id="btn-userid">
+	 				<i class="fa-brands fa-discord"></i> 중복확인</a>
+	 			</div>
+	 			<div class="col-auto">영문 소문자, 숫자 조합 5~10자 이내로</div>
+	 			<div class="desc"></div>
 	 		</div>
 	 	</td>
 	 </tr>
 	 <tr>
 	 	<th><span>*</span>비밀번호</th>
 	 	<td>
-	 		<div class="row">
+	 		<div class="row input-check align-items-center">
 	 			<div class="col-auto">
-	 				<input type="password" name="userpw" class="form-control">
+	 				<input type="password" name="userpw" class="check-item form-control">
 	 			</div>
+	 			<div class="col-auto">영문 대/소문자, 숫자 조합 5~10자 이내로</div>
+	 			<div class="desc"></div>
 	 		</div>
 	 	</td>
 	 </tr>
 	 <tr>
 	 	<th><span>*</span>비밀번호 확인</th>
 	 	<td>
-	 		<div class="row">
+	 		<div class="row input-check align-items-center">
 	 			<div class="col-auto">
-	 				<input type="password" name="userpw_ck" class="form-control">
+	 				<input type="password" name="userpw_ck" class="check-item form-control">
 	 			</div>
+	 			<div class="col-auto">비밀번호를 한번 더 입력하세요.</div>
+	 			<div class="desc"></div>
 	 		</div>
 	 	</td>
 	 </tr>
 	 <tr>
 	 	<th><span>*</span>이메일</th>
 	 	<td>
-	 		<div class="row">
+	 		<div class="row input-check align-items-center">
 	 			<div class="col-auto">
-	 				<input type="text" name="email" class="form-control">
+	 				<input type="text" name="email" class="check-item form-control">
 	 			</div>
+	 			<div class="desc"></div>
 	 		</div>
 	 	</td>
 	 </tr>
@@ -159,12 +176,118 @@ table th span {
 	</form>
 	
 	<div class="btn-toolbar gap-2 my-3 justify-content-center">
-		<button class="btn btn-primary">회원가입</button>
-		<button type="button" class="btn btn-outline-primary px-4">취소</button>
+		<button class="btn btn-primary" id="btn-join">회원가입</button>   <!-- form태그 밖이기때문에 아직 처리안됌 -->
+		<button type="button" class="btn btn-outline-primary px-4" onclick="history.go(-1)">취소</button>
 	</div>
 	
+	
+	
+	
+	
+	
+<script src ="<c:url value='/js/member.js?${now}'/>"></script>	
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>	
 <script>
+
+// 회원가입 버튼 클릭시
+$('#btn-join').on('click', function(){
+	if( $("[name=name]").val()==""){
+		alert("회원명을 입력하세요!");
+		$("[name=name]").focus();
+		$("[name=name]").val("")
+		return;
+	}
+	
+   // if ( invalidStatus( $("[name=userid]") ) ) return; 
+   		var _id = $("[name=userid]");
+   		
+   		// 중복확인 한 경우
+   		if( _id.hasClass("checked-item") ){
+   			// 사용중인 아이디인 경우 회원가입 불가
+   			if( _id.closest(".input-check").find(".desc").hasClass("text-danger") ){
+   				alert("회원가입 불가\n"+ member.userid.unUsable.desc)
+   				_id.focus()
+   				return;
+   			}
+   		}else{
+   		// 중복확인 하지 않은 경우
+   			if ( invalidStatus( _id ) ) return;
+   			else{
+   				// 입력은 유효하나 중복확인하지 않은 경우
+   				alert("회원가입 불가\n"+ member.userid.valid.desc)
+   				_id.focus()
+   				return;
+   			}
+   		}
+  
+	if ( invalidStatus( $("[name=userpw]") ) ) return;
+	if ( invalidStatus( $("[name=userpw_ck]") ) ) return;
+	if ( invalidStatus( $("[name=email]") ) ) return;
+	
+	$('form').submit()
+})
+
+
+// 체크항목에 입력을 유효하게 했는지 확인
+function invalidStatus( tag ){
+	var status = member.tagStatus( tag )
+	if( status.is )
+		return false;
+	else{
+		alert('회원가입 불가\n' + status.desc)
+		tag.focus()
+		return true;
+	}
+}
+
+
+// 아이디 중복확인 버튼 클릭시
+$('#btn-userid').on('click',function(){
+	useridCheck();
+})
+
+
+
+// 아이디 중복확인 함수
+function useridCheck(){
+	var _id = $('[name=userid]');
+	var status = member.tagStatus( _id );
+	if ( status.is ){
+		$.ajax({
+			url : 'useridCheck',
+			data : { userid : _id.val() }
+		}).done(function( response ){
+			console.log( response )
+		 	status = response ? member.userid.usable : member.userid.unUsable;
+			_id.closest('.input-check').find('.desc').text( status.desc )
+				.removeClass('text-success text-danger')
+				.addClass( status.is ? 'text-success' : 'text-danger')
+			
+			_id.addClass("checked-item"); // 중복확인눌렀다는 값 주기
+		})
+		
+	}else{
+		alert('아이디 중복확인 불필요\n' + status.desc);
+		_id.focus();
+	}
+}
+
+
+// 체크대상 항목에 키보드입력시 처리
+$('.check-item').on('keyup', function(e){
+	$(this).removeClass("checked-item")  // 중복확인했음 클래스 삭제
+	// 아이디에서 엔터시 중복확인처리하기                    엔터는 keyCode가 13
+	if( $(this).attr("name")=="userid" && e.keyCode==13 ){
+		useridCheck();
+	}else{
+		member.showStatus( $(this) )
+	}
+	
+	
+})
+
+
+
 $('#btn-post').on('click',function(){
 	  new daum.Postcode({
 	        oncomplete: function(data) {
@@ -186,6 +309,7 @@ $('#btn-post').on('click',function(){
 	    }).open();
 	})
 	
+	
 $(function(){
 	var today = new Date();
 	// 년도 : 13년전 해의 12월 31일까지는 선택가능
@@ -194,6 +318,8 @@ $(function(){
 	$('[name=birth]').datepicker('option', 'maxDate', endDay);
 	
 })
+
+var singleFile = '';  // 파일선택시 선택한 첨부파일정보를 담아둘 변수
 
 
 </script>	

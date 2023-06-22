@@ -28,9 +28,15 @@
 	<beans:bean class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
 		<beans:property name="order" value="1"/>
 	</beans:bean>
+	
 	<beans:bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
 		<beans:property name="definitions" 
 						value="/WEB-INF/views/tiles/config.xml"/>
+	</beans:bean>
+	
+	<!-- id 시작은 소문자 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="defaultEncoding" value="utf-8"/>
 	</beans:bean>
 	
 	<context:component-scan base-package="kr.co.smart" />

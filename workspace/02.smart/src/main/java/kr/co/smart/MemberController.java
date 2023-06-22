@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import smart.common.CommonUtility;
@@ -25,6 +26,48 @@ public class MemberController {
 	@Autowired
 	private BCryptPasswordEncoder pwEncoder;
 
+	
+	// 아이디 중복확인 처리 요청
+	@ResponseBody  @RequestMapping("/useridCheck")
+	public boolean useridCheck(String userid) {
+		// 화면에서 입력한 아이디가 DB에 있는지 여부를 확인
+		
+		// DB에 없는 아이디이면 사용가능, 있는 아이디이면 사용불가
+		return service.member_info(userid)==null ? true : false;
+	}
+	
+	
+	
+	// 회원가입 처리 요청
+	@ResponseBody @RequestMapping(value="/register" , produces="text/html; charset=utf-8")
+	public String join(MemberVO vo, HttpServletRequest request, MultipartFile file) {
+		if( ! file.isEmpty() ) { // 첨부파일이 있는 경우
+			// 서버의 물리적인 영역에 파일을 저장하는 처리
+		}
+		
+		
+		// 화면에서 입력한 정보로 DB에 신규회원정보 저장한 후
+		// 회원가입 성공 여부를 alert으로 띄운다.
+		
+		//  비밀번호 암호화해서 담기
+		vo.setUserpw( pwEncoder.encode( vo.getUserpw() ) ); 
+		
+		StringBuffer msg = new StringBuffer("<script>");
+		if ( service.member_join(vo)== 1 ) {
+			msg.append("alert('회원가입을 축하합니다'); location=' ")
+			.append( request.getContextPath() )
+			.append(" ' ");
+		}else {
+			msg.append("alert('회원가입 실패'); history.go(-1)");
+		}
+		
+		msg.append("</script>");
+		
+		return msg.toString();
+	}
+	
+	
+	
 	
 	// 회원가입 화면 요청
 	@RequestMapping("/join")
