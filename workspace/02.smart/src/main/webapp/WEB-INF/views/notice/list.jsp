@@ -21,13 +21,14 @@
 			<th>작성자</th>
 			<th>작성일자</th>
 		</tr>
+		<c:forEach items="${list}" var="vo">
 		<tr>
-			<td>1</td>
-			<td>공지글입니다</td>
-			<td>홍길동</td>
-			<td>2023-06-23</td>
+			<td>${vo.list}</td>
+			<td>${vo.title}</td>
+			<td>${vo.name}</td>
+			<td>${vo.writedate}-06-23</td>
 		</tr>
-	
+		</c:forEach>
 	</table>
 </body>
 </html>
