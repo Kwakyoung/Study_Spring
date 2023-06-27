@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,38 +21,36 @@ import smart.member.MemberVO;
 
 @Service
 public class CommonUtility {
+	
+	
+	//파일업로드
+	public String fileUpload(String category, MultipartFile file, HttpServletRequest request ) {
+		//D:\Study_Spring\Workspace\.metadata\.plugins\org.eclipse.wst.server.core
+		// \tmp0\wtpwebapps\02.smart\resources
+		//String path = request.getSession().getServletContext().getRealPath("resources");
 
-	
-	
-	// 파일업로드
-	public String fileUpload(String category, MultipartFile file, HttpServletRequest request) {
-//		D:\Study_Spring\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\02.smart\resources
-		String path = request.getSession().getServletContext().getRealPath("resources");
-		// String upload = "/upload/profile/2023/06/22/abc.png";
+		// d:\\app\smart
+		String path = "D:\\app"+ request.getContextPath(); // /smart
+//		String path = "D:/app/smart";
+
+		//String upload = "/upload/profile/2023/06/22/abc.png";
 		String upload = "/upload/"+ category 
-						+ new SimpleDateFormat("/yyyy/MM/dd").format(new Date());
+				+ new SimpleDateFormat("/yyyy/MM/dd").format(new Date());
 		path += upload;
-		
-		// 파일을 저장해둘 폴더가 없으면 폴더만들기
+		//파일을 저장해둘 폴더가 없으면 폴더 만들기
 		File folder = new File( path );
 		if( ! folder.exists() ) folder.mkdirs();
 		
-		String filename = UUID.randomUUID().toString()+ "_" + file.getOriginalFilename();
+		String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 		try {
-		file.transferTo( new File(path, filename ) );
+			file.transferTo( new File(path, filename) );
 		}catch(Exception e) {
 		}
-		
-		
+		// http://localhost:8080/smart/upload/profile/2023/06/22/abc.png
 		return appURL(request) + upload + "/" + filename;
 	}
 	
-	
-	
-	
-	
-	
-	
+
 	private void emailServerConnect(HtmlEmail email) {
 		email.setHostName("smtp.naver.com"); //메일서버지정
 		email.setAuthentication("rhkrdudrbs13", "goqxlr13"); //아이디/비번 으로 로그인
@@ -58,7 +58,41 @@ public class CommonUtility {
 	}
 	private String EMAIL_ADDRESS = "rhkrdudrbs13@naver.com";
 	
-	// 이메일 보내기
+	// 이메일 보내기: 회원가입축하메시지전송
+	public void sendWelcome(MemberVO vo, String welcomFile) {
+		HtmlEmail email = new HtmlEmail();
+		email.setCharset("utf-8");
+		email.setDebug(true);
+		
+		//이메일서버지정
+		emailServerConnect(email);
+		try {
+			email.setFrom( EMAIL_ADDRESS, "스마트 웹&앱 관리자" );
+			email.addTo( vo.getEmail(), vo.getName() );
+			email.setSubject("한울 스마트 웹&앱 과정 가입 축하");
+			
+			StringBuffer content = new StringBuffer();
+			content.append("<body>");
+			content.append("<h3><a target='_blank' href='http://hanuledu.co.kr/'>한울 스마트 웹&앱 과정</a></h3>");
+			content.append("<div>우리 과정 가입을 축하합니다</div>");
+			content.append("<div>프로젝트까지 마무리하시고 취업에 성공하시길 바랍니다</div>");
+			content.append("<div>첨부된 파일을 확인하신후 등교하세요</div>");
+			content.append("</body>");
+			email.setHtmlMsg( content.toString() );
+			
+			EmailAttachment file = new EmailAttachment();
+			file.setPath( welcomFile ); //파일선택
+			email.attach(file);			//선택한 파일 첨부
+			
+			email.send(); //메일 보내기버튼 클릭
+		
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	
+	// 이메일 보내기: 임시비번전송 
 	public boolean sendPassword(MemberVO vo, String pw) {
 		boolean send = true;
 		HtmlEmail email = new HtmlEmail();
