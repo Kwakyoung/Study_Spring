@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+<!-- 방명록 글 정보 저장  -->
+<insert id = "register">
+
+<selectKey order="AFTER" resultType="integer" keyProperty="id"> <!-- 인서트한 후에 타입, keyproperty <= 어디에 담을건지 -->
+select seq_board.currval from dual
+</selectKey>
+
+insert into board(title, content, writer)
+values (#{title}, #{content}, #{writer})
+</insert>
+	
+	
+	
+<!-- 방명록에 딸린 첨부파일 정보 저장 -->
+<insert id = "fileRegister">
+
+<foreach collection="fileList" item="file" open="insert all" separator=" " 
+		 												close="select * from dual">
+	insert into board_file ( board_id, filename, filepath )
+	values ( #{id}, #{file.filename}, #{file.filepath} )
+</foreach>
+
+<!-- 
+insert all
+into ...
+into ...
+into ...
+select * from dual
+ -->
+</insert>
+
+
+</mapper>
