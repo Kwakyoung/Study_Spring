@@ -6,12 +6,14 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import smart.board.BoardDAO;
 import smart.board.BoardVO;
 import smart.common.CommonUtility;
+import smart.common.PageVO;
 import smart.member.MemberDAO;
 import smart.member.MemberVO;
 
@@ -19,6 +21,20 @@ import smart.member.MemberVO;
 public class BoardController {
 	@Autowired private BoardDAO service;
 	@Autowired private CommonUtility common;
+	
+	
+	
+	
+	@RequestMapping("/modify")
+	public String modify(Model model, int id, PageVO page) {
+		// 해당 글 정보를 DB에서 조회해와 수정화면에 출력
+		model.addAttribute("vo", service.board_info(id)); 
+		model.addAttribute("page", page);
+		return "board/modify";
+	}
+	
+	
+	
 	
 	//방명록 신규저장처리 요청
 	public String register(BoardVO vo, MultipartFile file[], HttpServletRequest request) {

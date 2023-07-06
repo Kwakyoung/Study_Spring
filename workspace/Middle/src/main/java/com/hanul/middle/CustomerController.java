@@ -24,8 +24,8 @@ public class CustomerController {
 	
 	@Autowired @Qualifier("hanul") SqlSession sql;
 	@RequestMapping(value = "/list.cu" , produces = "text/html;charset=utf-8")   // < produces 받아오는 걸 utf-8로
-	public String list( ) {
-		System.out.println("누군가가 왔따감");
+	public String list( String param ) {
+		System.out.println("누군가가 왔따감" + param);
 		List<CustomerVO> vo = sql.selectList("customer.list");
 		System.out.println(vo.size());
 		
