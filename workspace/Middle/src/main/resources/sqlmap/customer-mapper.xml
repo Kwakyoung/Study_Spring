@@ -3,7 +3,8 @@
 <mapper namespace="customer">
 
 <select id="list" resultType="com.hanul.middle.CustomerVO">
-	select name from customer
+	SELECT name 
+	FROM customer
 </select>
 
 
