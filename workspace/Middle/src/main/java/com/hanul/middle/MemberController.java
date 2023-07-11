@@ -1,9 +1,18 @@
 package com.hanul.middle;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
+
+import member.MemberDAO;
+import member.MemberVO;
 
 @RestController @RequestMapping("/member")
 public class MemberController {
@@ -12,14 +21,27 @@ public class MemberController {
 	// 3. Android에서 Edittext를 이용해서 되는지 확인.
 	
 	
+	@Autowired MemberDAO dao;
 	@RequestMapping(value = "/login" , produces = "text/html;charset=utf-8")
-	public String login(String id, String pw) {
-		System.out.println(id+pw);
-		if(id.equals("admin") && pw.equals("admin1234")) {
-			return "Y";
-		}else {
-			return "N"; 
-		}
+	public String login(String id, String password) {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		params.put("password", password);
+		MemberVO vo = dao.login(params);
+		return new Gson().toJson(vo);
+		
+		
+		
+		
+		
+//		if(id != null && pw != null) {
+//		if(id.equals("1") && pw.equals("123")) {
+//			List<MemberVO> vo = sql.selectList("member.list");
+//			return new Gson().toJson(vo);
+//		}
+//		}
+//			
+//		return "no";
 		
 		
 	}

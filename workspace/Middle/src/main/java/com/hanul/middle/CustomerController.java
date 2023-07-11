@@ -30,7 +30,6 @@ public class CustomerController {
 		System.out.println(vo.size());
 		
 		Gson gson = new Gson();
-		
 		return gson.toJson(vo);
 	}
 	
