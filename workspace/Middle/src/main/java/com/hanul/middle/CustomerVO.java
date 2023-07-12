@@ -1,10 +1,9 @@
 package com.hanul.middle;
 
-import org.springframework.stereotype.Repository;
 
 public class CustomerVO {
 	private int id;
-	private String name, gender, eamil, phone;
+	private String name, gender, email, phone;
 	public int getId() {
 		return id;
 	}
@@ -23,11 +22,11 @@ public class CustomerVO {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public String getEamil() {
-		return eamil;
+	public String getEmail() {
+		return email;
 	}
-	public void setEamil(String eamil) {
-		this.eamil = eamil;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getPhone() {
 		return phone;

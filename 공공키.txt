@@ -1,2 +1,6 @@
-private String key 
-= "FPgj2NXbJw46TcGkmAfZEiYFDbxilys7KLjk3KaB7AfeJE00ZhPNM0M8unwbsI69fSmT8SNfVEimE6ZZ2U14hA%3D%3D"; 
+
+// 약국에서 긁어온것
+http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList?ServiceKey=
+
+// 내 인증키
+w%2FRKikJbHmvOjhvPOgZXQSMHJTV8oA0xh7uttgtctyxC3QQv2t%2BGqUXSJ2tZrYdPRXyO0%2B%2B%2B%2FGSYlw9aw5bdQA%3D%3D

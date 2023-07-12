@@ -29,6 +29,7 @@ public class CustomerController {
 		List<CustomerVO> vo = sql.selectList("customer.list");
 		System.out.println(vo.size());
 		
+		
 		Gson gson = new Gson();
 		return gson.toJson(vo);
 	}
@@ -37,10 +38,34 @@ public class CustomerController {
 	@RequestMapping(value = "/obj.cu" , produces = "text/html;charset=utf-8")
 	public String obj() {
 		CustomerVO vo = new CustomerVO();
-		vo.setEamil("이메일");
+		vo.setEmail("이메일");
 		vo.setName("이름이용");
 		return new Gson().toJson(vo);
 	}
+	
+	
+	// 삭제 처리하는 것
+	@RequestMapping(value = "/delete.cu" , produces = "text/html;charset=utf-8")
+	public String delete(int id) {
+		int result = sql.delete("customer.delete", id);
+		System.out.println(result);
+		return "";
+	}
+	
+	// 추가하기
+	@RequestMapping(value = "/insert.cu" , produces = "text/html;charset=utf-8")
+	public String insert(CustomerVO vo) {
+		sql.insert("customer.insert", vo);
+		
+		return "aa";
+	}
+	
+	@RequestMapping(value = "/update.cu" , produces = "text/html;charset=utf-8")
+	public String update(CustomerVO vo) {
+		sql.update("customer.update", vo);
+		return "aa";
+	}
+	
 	
 	
 	

@@ -3,10 +3,27 @@
 <mapper namespace="customer">
 
 <select id="list" resultType="com.hanul.middle.CustomerVO">
-	SELECT name 
+	SELECT *
 	FROM customer
 </select>
 
+<delete id="delete">
+delete from customer where id = #{id}
+</delete>
+
+<insert id="insert">
+INSERT into customer (name, email, phone)
+VALUES (#{name}, #{email}, #{phone})
+</insert>
+
+
+<update id="update">
+update  customer
+set     name = #{name}
+		email = #{email}
+		phone = #{phone}
+where   id = #{id}
+</update>
 
 
 </mapper>

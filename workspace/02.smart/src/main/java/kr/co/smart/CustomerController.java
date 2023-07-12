@@ -23,6 +23,7 @@ public class CustomerController {
 	}
 	 */
 	
+	
 	// 고객정보 삭제처리 요청
 	@RequestMapping("/delete.cu")
 	public String delete(int id) {
