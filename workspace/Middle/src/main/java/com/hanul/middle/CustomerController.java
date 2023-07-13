@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 
+import hr.EmployeeVO;
+
 @RestController
 public class CustomerController {
 	// 어노테이션 == 주석 ?
@@ -65,6 +67,7 @@ public class CustomerController {
 		sql.update("customer.update", vo);
 		return "aa";
 	}
+	
 	
 	
 	
