@@ -2,11 +2,50 @@
  * 공통 함수 선언
  */
 
+//10Mb 를 넘는 파일을 걸러내는 처리
+function filteredFile( files ){
+	var exist = false;
+	//files는 객체, 값만 따로 뽑아본다
+	//객체: Object : var obj1 = new Object();  === 	var obj2 = {};
+	//배열 Array;  :	var arr1 = new Array();   === 	var arr2 = [];
+
+	console.log( '1> ', files )
+	files = Object.values(files).filter( function(file){
+		//10M 초과 파일이 여러개라도 alert 은 한번만 띄우기 위한 처리
+		if( file.size > 1024*1024*10 ) exist = true;	
+		//10M 이하 파일들만 걸러내기	
+		return file.size <= 1024*1024*10; 
+	})
+	console.log( '2> ', files )
+	
+	if( exist ){
+		alert('10Mb 이상 첨부 불가!')
+	}
+	
+	return files; //걸러낸 10Mb 이하 파일들
+}
+
 //파일관리 객체 생성자함수
 function FileList(){
 	this.files = [];
+	this.info = { upload:[], fileId:[], removeId:[] };  //업로드여부, 업로드된 파일id, 삭제할 파일id
+	//이미 업로드된 파일: 처리할 게 없음
+	//새로 추가첨부한 파일: upload 해야 함
+	//이미 업로드되어 있던 파일을 삭제: DB+ 물리적 파일 삭제
+	// new Object  ==  {}, new Array() == []
 	
-	this.setFile = function( file ){
+	this.setFile = function( file, id ){
+		//선택한 파일마다 alert이 뜬다 
+//		if( file.size > 1024*1024*10 ){
+//			alert("10Mb 이상의 파일은 첨부할 수 없습니다")
+//			return;
+//		}
+		// 두번째 파라미터 id가 O 업로드 안함(false)
+		// 드래그드랍 또는 파일태그로 선택 하는 경우  id가 X 업로드 해야함(true)
+		this.info.upload.push( typeof id == "undefined" ? true  : false ); //true: 업로드해야 함, false: 업로드 안함
+		// 두번쨰 파라미터 id가 O : fildId 에 담기
+		if( typeof id != "undefined" ) this.info.fileId.push( id ); 
+		
 		this.files.push( file );
 	}
 	
@@ -16,13 +55,34 @@ function FileList(){
 	
 	this.removeFile = function( i ){
 		this.files.splice( i, 1 );
+		//업로드여부 삭제
+		this.info.upload.splice( i, 1 );
+		
+		//이미 업로드 되어 있는 파일삭제한 경우 삭제할 파일id에 담기
+		if( typeof this.info.fileId[i] != "undefined" ){
+			this.info.removeId.push( this.info.fileId[i] ); //삭제대상 파일id 추가
+			this.info.fileId.splice(i, 1); 	// 파일id 목록에서도 삭제			                                               
+		}
+		 
 	}
+	
 	this.showFile = function(){
 		
 		var tag = '';
-		if (this.files.length>0){
+		if( this.files.length > 0 ){
+			for( var i=0; i<this.files.length; i++ ){
+				tag +=
+				`<div class="file-item d-flex gap-2 align-items-center my-1">
+					<button type="button" class="btn-close small" data-seq="${i}"></button>
+					<span class="file-name">${this.files[i].name}</span>
+				</div>`;				
+			}
 			
+		}else{
+			tag = '<div class="text-center py-3">첨부할 파일을 마우스로 끌어 오세요</div>';
 		}
+		$('.file-drag').html( tag );
+		console.log( '최종fileList', fileList )
 	}
 }
 
@@ -117,7 +177,7 @@ $(document)
 	}
 	
 })
-.on('click', '.file-item .btn_close', function(){
+.on('click', '.file-item .btn-close', function(){
 	// 첨부된 파일 삭제 클릭시
 	fileList.removeFile( $(this).data('seq') );
 	fileList.showFile();
@@ -145,6 +205,18 @@ function rejectedFile( fileInfo, tag ){
 }
 
 $(function(){
+	//다중파일선택 처리
+	$('input#file-multiple').on('change', function(){
+//		var files = this.files;
+//		files = filteredFile( files )
+		var files = filteredFile( this.files ) //10M 이하 파일만
+
+		for( var i=0; i<files.length; i++ ){
+			fileList.setFile( files[i] );
+		}
+		fileList.showFile()
+	}) 
+	
 	//프로필 이미지 선택처리
 	$('input#file-single').change(function(){
 //		console.log( $(this) )
@@ -217,6 +289,36 @@ $(function(){
 		e.preventDefault();
 	})
 	
+	//드래그드랍으로 파일첨부 처리	
+	$('.file-drag').on({
+		'dragover dragleave drop' : function(e){
+			e.preventDefault();
+			
+			//드래그오버시 입력태그에 커서가 있을때처럼 보여지게
+			if( e.type=='dragover' )  	$(this).addClass('drag-over') 
+			else 						$(this).removeClass('drag-over')
+		},
+		'drop': function(e){
+			console.log( e.originalEvent.dataTransfer.files )
+//			var files = e.originalEvent.dataTransfer.files ;
+//			files = filteredFile( files );  // 10M 초과 파일은 걸러내기
+			var files = filteredFile( e.originalEvent.dataTransfer.files );  // 10M 초과 파일은 걸러내기
+			
+			for(var i=0; i<files.length; i++){
+				//폴더는 담지 않는다
+				if( files[i].type == "" ){
+					alert("폴더는 첨부할 수 없습니다")
+				}else{
+					fileList.setFile( files[i] );
+				}
+			}
+			console.log( fileList )
+			fileList.showFile();
+		}
+	})
+	
+	
+	
 	var today = new Date();
 	var range = today.getFullYear()-100 + ':' + today.getFullYear();
 	$.datepicker.setDefaults({
@@ -234,6 +336,19 @@ $(function(){
 	$( ".date" ).datepicker();
 	$( ".date" ).attr('readonly', true)
 }) 
+
+//서브밋 전 다중파일첨부 정보 file태그에 담기
+function multipleFileUpload(){
+	var transfer = new DataTransfer();
+	var files = fileList.getFile();
+	if( files.length>0 ){
+		for( var i=0; i<files.length; i++ ){
+			//업로드해야 하는 파일들만(true) 추가
+			if( fileList.info.upload[i] ) transfer.items.add( files[i] ) 
+		}
+	}
+	$('input#file-multiple').prop('files', transfer.files )
+}
 
 //입력항목 입력여부 확인
 function emptyCheck(){
