@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="visual">
+
+<!-- 부서별 사원수 조회 -->
+<select id="department" resultType="hashmap">
+	SELECT   e.department_id, count (*) count, NVL(d.department_name, '소속없음') AS department_name
+	FROM     employees e left outer JOIN departments d ON e.department_id = d.department_id
+	GROUP BY e.department_id, d.department_name
+	ORDER BY e.department_id
+</select>
+
+
+
+
+</mapper>
