@@ -14,8 +14,17 @@ public class VisualDAO implements VisualService{
 	
 	@Override
 	public List<HashMap<String, Object>> department() {
-		
 		return sql.selectList("visual.department");
 	}
-	
+
+	@Override
+	public List<HashMap<String, Object>> hirement_year() {
+		return sql.selectList("visual.hirementYear");
+	}
+
+	@Override
+	public List<HashMap<String, Object>> hirement_month() {
+		return sql.selectList("visual.hirementMonth");
+	}
+
 }

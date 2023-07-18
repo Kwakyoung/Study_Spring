@@ -15,7 +15,18 @@ import smart.visual.VisualDAO;
 public class VisualController {
 	@Autowired private VisualDAO service;
 	
-	//부서별 사원수 조회 요청
+	//년도별 채용인원수 조회 요청
+	@RequestMapping("/hirement/year")
+	public Object hirement_year() {
+		return service.hirement_year();
+	}
+	
+	//월별 채용인원수 조회 요청
+	@RequestMapping("/hirement/month")
+	public Object hirement_month() {
+		return service.hirement_month();
+	}
+
 	//@ResponseBody 
 	@RequestMapping("/department")
 	public Object department() {

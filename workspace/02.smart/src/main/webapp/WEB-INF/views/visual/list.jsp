@@ -27,6 +27,38 @@
   </li>
 </ul>
 <div id='tab-content' class="m-md-2 m-lg-3" style='height:520px'>
+	<!-- 부서원수에 대한 막대/도넛 그래프 선택 -->
+	<div class="tab text-center mt-4">
+		<div class="form-check form-check-inline">
+		  <label>
+			  <input class="form-check-input" type="radio" name="chart" value="bar" checked>막대그래프
+		  </label>
+		</div>
+		<div class="form-check form-check-inline">
+		  <label>
+			  <input class="form-check-input" type="radio" name="chart" value="donut">도넛그래프
+		  </label>
+		</div>
+	</div>
+	<!-- 채용인원수에 대한 년도별/월별 선택 -->
+	<div class="tab text-center mt-4">
+		<div class="form-check form-check-inline">
+		  <label>
+			  <input class="form-check-input" type="checkbox" id="top3" >TOP3부서
+		  </label>
+		</div>
+		
+		<div class="form-check form-check-inline">
+		  <label>
+			  <input class="form-check-input" type="radio" name="unit" value="year" checked>년도별
+		  </label>
+		</div>
+		<div class="form-check form-check-inline">
+		  <label>
+			  <input class="form-check-input" type="radio" name="unit" value="month">월별
+		  </label>
+		</div>
+	</div>
 	<canvas id="chart" class="h-100 m-auto"></canvas>
 </div>
 
@@ -56,12 +88,47 @@ Chart.defaults.set('plugins.datalabels', {
 })
 
 
+//그래프형태(막대/도넛) 선택시
+$('[name=chart]').change(function(){
+	department();
+})
+//채용인원수조회 단위(년도별/월별) 선택시, TOP3 체크선택/해제시
+$('[name=unit], #top3').change( function(){
+	hirement_info();
+})
+
+function hirement_info(){
+	if( $('#top3').prop('checked') ) 	hirement_top3();
+	else 								hirement();
+}
+
+//부서원수 상위 3위까지의 년도별/월별 채용인원수
+function hirement_top3(){
+	initCanvas();
+	var unit = $('[name=unit]:checked').val();
+	$.ajax({
+		url: 'hirement/top3/' + unit,
+	}).done(function( response ){
+		console.log( response )
+	})
+	
+}
+
+function initCanvas(){
+	$('#legend').remove();
+	$('canvas#chart').remove();
+	$('#tab-content').append( `<canvas id="chart" class="h-100 m-auto"></canvas>` );
+}
+
 $('ul.nav-tabs li').on({
 	'click': function(){
 		$('ul.nav-tabs li a').removeClass('active');
 		$(this).children('a').addClass('active');
 		
 		var idx = $(this).index();
+		$('#tab-content .tab').addClass('d-none');
+		$('#tab-content .tab').eq(idx).removeClass('d-none');
+		
 		if(idx==0) 				department(); 	//부서원수 조회
 		else if(idx==1) 		hirement();		//채용인원수 조회
 	},
@@ -78,6 +145,8 @@ $('ul.nav-tabs li').on({
 
 //부서원수 조회
 function department(){
+	initCanvas();
+	
 	$.ajax({
 		url: 'department',
 	}).done(function( response ){
@@ -91,9 +160,11 @@ function department(){
 			info.colors.push( colors[ Math.floor(this.COUNT/10) ] );
 		})
 		console.log( info );
-		//barChart( info );
 		//lineChart( info );
-		donutChart( info );
+		if( $('[name=chart]:checked').val()=='bar' )
+			barChart( info );
+		else 
+			donutChart( info );
 	})
 	
 	//sampleChart();
@@ -109,12 +180,10 @@ function donutChart( info ){
 	$(info.datas).each( function(){
 		sum += this;
 	})
-	
-	// 배열정보로 새로운 배열정보를 만들어주는 함수 : map
-	info.pct = info.datas.map(function (data){
-		
-	})
-	
+	//배열정보로 새로운 배열정보를 만들어주는 함수: map
+	info.pct = info.datas.map( function( data ){ 
+		return Math.round(data / sum * 10000)/100 ;   // 20.54
+	}) 
 	
 	visual = new Chart( $('#chart') , {
 		type: 'doughnut',
@@ -127,7 +196,7 @@ function donutChart( info ){
 	      	}]
 		},
 		options: {
-			cutout: '60%', //내부원을 몇% 잘라낼것인지, 0:파이,
+			cutout: '50%', //내부원을 몇% 잘라낼것인지, 0:파이,
 			maintainAspectRatio: false, //크기조정시 캔버스 가로세로비율 유지X(기본O)
 	    	responsive: true, 	//컨테이너 크기 변경시 캔버스 크기 조정X(기본O)
 			plugins:{
@@ -135,7 +204,7 @@ function donutChart( info ){
 				datalabels: {
 					anchor: 'middle', //도넛조각 내부에 데이터위치하게, 
 					formatter: function(value, item){
-						return `\${value}명(\${ info.pct[item.dataIndex]}%)`;
+						return `\${value}명(\${ info.pct[item.dataIndex] }%)`;
 					}
 				}
 			}
@@ -259,10 +328,12 @@ var colors = [ '#075be3', '#07e324','#e31207',  '#b307e3'
 //브라우저크기 변경시 차트크기 처리
 $(window).resize(function(){
 	var small = $('#tab-content').width() < 1000 ? true : false;
+	
 	if( visual.config.type=='doughnut'){
-		if( small ){
-			$('#chart').css( 'width', $('#tab-content').width() );
-		}		
+		//if( small ){
+			//$('#chart').css( 'width', $('#tab-content').width() );
+			$('#chart').css( 'width', '550' );
+		//}		
 	}else{
 		visual.options.responsive = small;  //컨테이너 크기 변경시 캔버스 크기 조정할건지 적용
 		$('#chart').css( 'width', small ? $('#tab-content').width() : 1000 );
@@ -304,13 +375,70 @@ function sampleChart(){
 
 //채용인원수 조회
 function hirement(){
-	
+	initCanvas();
+	var unit = $('[name=unit]:checked').val(); 
+	$.ajax({
+		url: 'hirement/' + unit,
+	}).done(function( response ){
+		console.log(response)
+		var info = new Object();
+		info.datas = new Array(), info.category = [], info.colors = [];
+		$(response).each(function(){
+			info.datas.push( this.COUNT );
+			info.category.push( this.UNIT );
+			info.colors.push( colors[ Math.floor(this.COUNT/10) ] ); //데이터수치값 범위에 맞는 색상 지정
+		})
+		info.title = `\${unit == 'year' ? "년도별" : "월별"} 채용인원수`;
+		unitChart( info );
+	})
 }
 
+//단위별(년도별/월별) 채용인원수 그래프
+function unitChart( info ){
+	$('#tab-content').css('height', 540);
+	visual = new Chart( $('#chart'), {
+		type: 'bar',
+		data: {
+			labels: info.category,
+			datasets: [
+				{ 
+					data: info.datas,
+					barPercentage: 0.5,
+					backgroundColor: info.colors,
+				}
+			]
+		},
+		options:{
+			layout: { padding:{top:30, bottom:20} },
+			plugins:{
+				datalabels: {
+					formatter: function(value){
+						return `\${value}명`;
+					}
+				},
+				legend: { display: false }, 
+			},
+			responsive: false,
+			maintainAspectRatio: false,
+			scales:{
+				y: {
+					title: { text: info.title, display: true }
+				}
+			}
+		}
+	} );
+	
+	makeLegend();
+}
+
+
 $(function(){
-	$('ul.nav-tabs li').eq(0).trigger( 'click' );
+	$('ul.nav-tabs li').eq(1).trigger( 'click' );
 })
 
 </script>
 </body>
 </html>
+
+
+
