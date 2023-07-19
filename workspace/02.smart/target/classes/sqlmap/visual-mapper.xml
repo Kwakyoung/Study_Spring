@@ -2,6 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="visual">
 
+<!-- 부서원수 상위3위 년도별 사원수 조회 -->
+<select id="hirementTop3Year" resultType="hashmap">
+<![CDATA[ 
+select *
+from (
+        select department_name, to_char(hire_date,'yyyy') unit
+        from employees e inner join 
+                (select rank, department_id, '(TOP' || rank || ')'|| department_name  department_name
+                 from (select  dense_rank() over(order by count(*) desc) rank, department_id, count(*) count
+                       from employees
+                       group by department_id) e left outer join departments d using(department_id)
+                 where rank <= 3) r using (department_id)
+     )
+pivot( count(*) for unit in ( '2002' "2002년",'2003' "2003년",'2004' "2004년",'2005' "2005년"
+                             ,'2006' "2006년",'2007' "2007년"
+                             ,'2008' "2008년",'2023' "2023년")  )
+order by department_name 
+]]>
+</select>
+
+<!-- 부서원수 상위3위 월별 사원수 조회 -->
+<select id="hirementTop3Month"  resultType="hashmap">
+<![CDATA[   
+select *
+from (
+        select department_name, to_char(hire_date,'mm') unit
+        from employees e inner join 
+                (select rank, department_id, '(TOP' || rank || ')'|| department_name  department_name
+                 from (select  dense_rank() over(order by count(*) desc) rank, department_id, count(*) count
+                       from employees
+                       group by department_id) e left outer join departments d using(department_id)
+                 where rank <= 3) r using (department_id)
+     )
+pivot( count(*) for unit in ( '01' "01월",'02' "02월",'03' "03월",'04' "04월",'05' "05월",'06' "06월"
+                             ,'07' "07월",'08' "08월",'09' "09월",'10' "10월",'11' "11월",'12' "12월" )  )
+order by department_name 
+]]>
+</select>
+
 <!-- 년도별 사원수 조회 -->
 <select id="hirementYear" resultType="hashmap">
 select to_char(hire_date,'yyyy')||'년' unit, count(employee_id) count
@@ -9,7 +48,6 @@ from employees
 group by to_char(hire_date,'yyyy')
 order by unit
 </select>
-
 <!-- 월별 사원수 조회 -->
 <select id="hirementMonth" resultType="hashmap">
 select to_char(hire_date,'mm')||'월' unit, count(employee_id) count
@@ -17,26 +55,6 @@ from employees
 group by to_char(hire_date,'mm')
 order by unit
 </select>
-
-<!-- 부서원수 상위 3위 월별 사원수 조회 -->
-<!-- <![CDATA[   ]]>  는 쿼리문 안에 <처럼 특수문자를 사용하게하려고 해줌  -->
-<select id="hirementTop3Month" resultType="hashmap">
-<![CDATA[ 
-select *
-from ( SELECT  department_name, TO_CHAR(hire_date,'mm') unit
-        FROM    employees e inner join
-        (select rank, department_id, '(TOP' || rank || ')'|| department_name department_name
-        from (  SELECT   rank() over(order by count(*) desc) rank ,department_id , count(*) count
-                FROM     employees 
-                GROUP BY department_id ) e left outer join departments d using(department_id)
-        where rank <= 3) r using (department_id) )
-PIVOT ( count(*) for unit in ('01' "01월", '02' "02월", '03' "03월", '04' "04월", '05' "05월", '06' "06월",
-                              '07' "07월", '08' "08월", '09' "09월", '10' "10월", '11' "11월", '12' "12월" ) )
-ORDER BY department_name
-]]>
-</select>
-
-
 
 <!-- 부서별 사원수 조회 -->
 <select id="department" resultType="hashmap">

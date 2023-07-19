@@ -18,7 +18,7 @@ public class RetrofitController {
 	
 	
 	@RequestMapping(value = "/list.re" , produces = "text/html;charset=utf-8")
-	public String list(RetrofitVO vo) {
+	public String list() {
 		return new Gson().toJson(dao.select());
 	}
 	
