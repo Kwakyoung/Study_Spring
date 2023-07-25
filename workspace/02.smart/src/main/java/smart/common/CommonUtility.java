@@ -108,10 +108,10 @@ public class CommonUtility {
 
 	private void emailServerConnect(HtmlEmail email) {
 		email.setHostName("smtp.naver.com"); //메일서버지정
-		email.setAuthentication("itstudydev", "Itstudy10102"); //아이디/비번 으로 로그인
+		email.setAuthentication("rhkrdudrbs13", "goqxlr13"); //아이디/비번 으로 로그인
 		email.setSSLOnConnect(true); // 로그인버튼 클릭
 	}
-	private String EMAIL_ADDRESS = "itstudydev@naver.com";
+	private String EMAIL_ADDRESS = "rhkrdudrbs13@naver.com";
 	
 	// 이메일 보내기: 회원가입축하메시지전송
 	public void sendWelcome(MemberVO vo, String welcomFile) {

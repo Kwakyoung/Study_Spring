@@ -1,0 +1,60 @@
+웹 브라우저 url 요청
+-> Controller
+-> Service
+-> DAO
+-> mapper
+
+
+서블릿에서 
+Controller 
+-->
+비지니스로직: 처리를 실행 : interface - execute(request, response)
+interface 를 구현하는 구체화된 메소드를 갖는 클래스: action/command   
+ListAction    
+InfoCommand
+InsertCommand
+UpdateAction                          
+
+-->
+Model
+DAO(DataAccess Object)  - DTO(DataTransfer Object)객체에 데이터를 담기
+
+--> 
+Controller
+응답화면 연결 View
+
+ 
+ 
+스프링
+Controller
+--> 
+Service interface : 각 처리 메소드들을 선언
+interface 를 구현하는 클래스를 선언
+-->
+DAO : Mybatis 프레임워크 
+-->
+View 
+
+VO(Value Object) - 영속성(DB 데이터)
+
+ 
+ 
+동기: 순차처리  
+ajax: 비동기처리 - 순서없이 처리
+
+http://localhost:8080/smart/notice/info?id=1789
+
+$.ajax({
+	url: 'notice/info',
+	type: 'post', 전송방식(form태그의 method)
+	data: { id: 1789, name: '홍길동' },
+	async: true,  기본 비동기처리(true), 동기처리를 해야하는 경우: false
+}).done(function( response ){
+	response 를 출력/처리하는데 사용 
+})
+
+
+
+ 
+ 
+ 

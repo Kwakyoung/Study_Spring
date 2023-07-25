@@ -16,6 +16,7 @@
 	<resources location="/resources/css/" mapping="/css/**"/>
 	<resources location="/resources/js/" mapping="/js/**"/>
 	<resources location="/resources/images/" mapping="/img/**"/>
+	<resources location="/resources/upload/" mapping="/upload/**"/>
 	<resources mapping="/resources/**" location="/resources/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
@@ -28,14 +29,13 @@
 	<beans:bean class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
 		<beans:property name="order" value="1"/>
 	</beans:bean>
-	
 	<beans:bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
 		<beans:property name="definitions" 
 						value="/WEB-INF/views/tiles/config.xml"/>
 	</beans:bean>
 	
-	<!-- id 시작은 소문자 -->
-	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	<beans:bean id="multipartResolver" 
+	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<beans:property name="defaultEncoding" value="utf-8"/>
 	</beans:bean>
 	
